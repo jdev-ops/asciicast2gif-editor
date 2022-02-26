@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+
+FILES="./*"
+for f in $FILES; do
+  if [ -f "${f}" ]; then
+    mkdir "${f}_gif"
+    mv "${f}" "${f}_gif/"
+
+    cd "${f}_gif"
+
+    echo Converting ${f} to "${f}.gif"
+
+    DEBUG=1 asciicast2gif "${f}" "${f}.gif" >output.txt
+
+    echo Splitting "${f}.gif"
+
+    convert -coalesce "${f}.gif" %d.png
+
+    _gen_metadata >output.json
+
+    command -v jq >/dev/null 2>&1
+    jq_result=$?
+
+    if [ $jq_result -eq 0 ]; then
+      jq . output.json >output2.json
+      rm output.json
+      mv output2.json output.json
+    fi
+
+    cd ..
+
+  fi
+done

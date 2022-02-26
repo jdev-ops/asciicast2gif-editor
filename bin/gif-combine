@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+
+convert_cmd=$(_gif_combine "$@")
+
+cmd_result=$?
+
+if [ $cmd_result -eq 0 ]; then
+  echo $convert_cmd
+  eval $convert_cmd
+fi
